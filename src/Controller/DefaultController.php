@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\DataTransfertObject\SearchDto;
 use App\Entity\Article;
 use App\Entity\Categorie;
+use App\Form\SearchFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -33,6 +36,27 @@ class DefaultController extends AbstractController
 
         return $this->render('rendered/nav_categories.html.twig', [
             'categories' => $categories
+        ]);
+    }
+
+    /**
+     * @Route("/recherche", name="render_search_bar", methods={"GET|POST"})
+     */
+    public function renderSearchBarInNav(Request $request): Response
+    {
+        $query = new SearchDto();
+
+        $form = $this->createForm(SearchFormType::class, $query)
+            ->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+//            $query->query = $form->get('query')->getData();
+            dd($query);
+        }
+
+        return $this->render('rendered/search_bar.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 
